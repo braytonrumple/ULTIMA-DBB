@@ -9,15 +9,18 @@ int main() {
     int t2 = sched.create_task("Task2");
     int t3 = sched.create_task("Task3");
 
-    sched.get_current()->state = RUNNING;
+    sched.yield();
 
     // Simulate tasks trying to access resource
+    std::cout << "Task " << sched.get_current()->task_id << " requesting resource\n";
     sem.down(sched.get_current());  // Task1 gets it
     sched.yield();
 
+    std::cout << "Task " << sched.get_current()->task_id << " requesting resource\n";
     sem.down(sched.get_current());  // Task2 blocked
     sched.yield();
 
+    std::cout << "Task " << sched.get_current()->task_id << " requesting resource\n";
     sem.down(sched.get_current());  // Task3 blocked
 
     sched.dump(1);
