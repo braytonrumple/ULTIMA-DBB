@@ -1,0 +1,36 @@
+=== TEST CASE 1 ===
+
+--- Process Table ---
+Task: Task1 | ID: 1 | State: RUNNING
+Task: Task2 | ID: 2 | State: READY
+Task: Task3 | ID: 3 | State: READY
+
+
+=== TEST CASE 2 ===
+
+--- Process Table ---
+Task: Task1 | ID: 1 | State: READY
+Task: Task2 | ID: 2 | State: READY
+Task: Task3 | ID: 3 | State: BLOCKED
+
+--- Semaphore Dump ---
+Resource: Printer
+Value: 0
+Queue: 2 -> 3 -> NULL
+
+
+=== TEST CASE 3 ===
+
+--- Process Table ---
+Task: Task1 | ID: 1 | State: RUNNING
+Task: Task2 | ID: 2 | State: READY
+Task: Task3 | ID: 3 | State: READY
+Queue: 3 -> NULL
+
+
+=== TEST CASE 4 ===
+
+--- Process Table ---
+Task: Task1 | ID: 1 | State: READY
+Task: Task2 | ID: 2 | State: READY
+Task: Task3 | ID: 3 | State: RUNNING
