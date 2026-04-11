@@ -26,16 +26,37 @@ int Scheduler::create_task(const char* name) {
 }
 
 void Scheduler::yield() {
+    // If there is no current task, nothing to schedule
     if (!current) return;
 
-    current->state = READY;
-    current = current->next ? current->next : head;
-
-    while (current->state != READY) {
-        current = current->next ? current->next : head;
+    // If the current task is running, move it back to READY
+    if (current->state == RUNNING) {
+        current->state = READY;
     }
 
-    current->state = RUNNING;
+    // Save where we started so we can detect a full loop
+    TCB* start = current;
+
+    // Loop through the task list in a circular manner
+    do {
+        // Move to next task, wrap to head if at end
+        current = current->next ? current->next : head;
+
+        // If we find a READY task, schedule it
+        if (current->state == READY) {
+            current->state = RUNNING; // give CPU to this task
+            return;
+        }
+
+        // keep searching
+    } while (current != start);
+
+    // If we came back to the starting point, it means there are NO READY tasks
+    if (start->state != READY) {
+        std::cout << "No READY tasks available\n";
+    }
+
+    current = start;
 }
 
 void Scheduler::kill_task(int id) {
