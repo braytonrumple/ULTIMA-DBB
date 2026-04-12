@@ -16,7 +16,7 @@ int IPC::Message_Send(int s_id, int d_id, const char* text, int type) {
 
     TCB* dest = sched->get_task_by_id(d_id);
     TCB* src  = sched->get_task_by_id(s_id);
-    TCB* current = sched->get_current_task();
+    TCB* current = sched->get_current();
 
 
     if (!dest || !src) return -1;
