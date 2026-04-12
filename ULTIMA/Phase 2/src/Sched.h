@@ -5,6 +5,7 @@
 #include <cstring>
 #include <queue>
 #include "ipc.h"
+#include "Sema.h"
 
 // Task states
 enum State { RUNNING, READY, BLOCKED, DEAD };
@@ -17,6 +18,8 @@ struct TCB {
     TCB* next;
 
     std::queue<Message> mailbox;  // Store Message objects, not pointers
+
+    Semaphore* mailbox_semaphore;
 };
 
 class Scheduler {

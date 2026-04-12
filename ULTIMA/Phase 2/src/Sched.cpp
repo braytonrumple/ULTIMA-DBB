@@ -18,6 +18,8 @@ int Scheduler::create_task(const char* name) {
     newTask->state = READY;           // start as ready
     newTask->next = nullptr;
 
+    newTask->mailbox_semaphore = new Semaphore("mailbox");
+
     // if first task
     if (!head) {
         head = newTask;
@@ -76,7 +78,7 @@ void Scheduler::garbage_collect() {
                 prev->next = temp->next;
             else
                 head = temp->next;
-
+            delete temp->mailbox_semaphore;
             delete temp;
 
             temp = (prev) ? prev->next : head;
