@@ -116,7 +116,7 @@ TCB* Scheduler::get_current() {
     return current;
 }
 
-// 🔥 ADDED: find task by id (used by IPC)
+// find task by id (used by IPC)
 TCB* Scheduler::get_task_by_id(int id) {
     TCB* temp = head;
 
