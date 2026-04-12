@@ -16,6 +16,8 @@ int IPC::Message_Send(int s_id, int d_id, const char* text, int type) {
 
     TCB* dest = sched->get_task_by_id(d_id);
     TCB* src  = sched->get_task_by_id(s_id);
+    TCB* current = sched->get_current_task();
+
 
     if (!dest || !src) return -1;
 
@@ -35,7 +37,9 @@ int IPC::Message_Send(int s_id, int d_id, const char* text, int type) {
     msg.text[sizeof(msg.text) - 1] = '\0';
 
     // push into destination mailbox queue
+    dest->mailbox_semaphore->down(current);
     dest->mailbox.push(msg);
+    dest->mailbox_semaphore->up();
 
     return 0;
 }
@@ -48,12 +52,17 @@ int IPC::Message_Receive(int task_id, Message &msg) {
     TCB* task = sched->get_task_by_id(task_id);
     if (!task) return -1;
 
+    task->mailbox_semaphore->down(task); //lock mailbox
+
     if (task->mailbox.empty()) {
+        task->mailbox_semaphore->up();
         return 0; // no message available
     }
 
     msg = task->mailbox.front(); // get first message
     task->mailbox.pop();         // remove it
+
+    task->mailbox_semaphore->up();
 
     return 1;
 }
@@ -66,7 +75,10 @@ int IPC::Message_Count(int task_id) {
     TCB* task = sched->get_task_by_id(task_id);
     if (!task) return -1;
 
-    return task->mailbox.size();
+    task->mailbox_semaphore->down(task);
+    int count = task->mailbox.size();
+    task->mailbox_semaphore->up();
+    return count;
 }
 
 // =========================
@@ -128,9 +140,13 @@ int IPC::Message_DeleteAll(int task_id) {
     TCB* task = sched->get_task_by_id(task_id);
     if (!task) return -1;
 
+    task->mailbox_semaphore->down(task);
+
     while (!task->mailbox.empty()) {
         task->mailbox.pop();
     }
+
+    task->mailbox_semaphore->up();
 
     return 0;
 }
