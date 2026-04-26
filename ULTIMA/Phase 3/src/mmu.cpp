@@ -1,6 +1,6 @@
 #include "mmu.h"
-#include "sema.h"
-#include "sched.h"
+#include "Sema.h"
+#include "Sched.h"
 #include <string>
 
 using namespace std;
